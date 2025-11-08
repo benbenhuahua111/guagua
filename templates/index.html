@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="hero">
+  <h1>盈亏日记（Web 版）</h1>
+  <p>一个开箱即用的记账与盈亏管理小站：登录、快速记账、日/月报表、图表与导出。</p>
+  <div class="actions">
+    <a class="btn" href="{{ url_for('register') }}">创建账号</a>
+    <a class="btn btn-outline" href="{{ url_for('login') }}">已有账号？登录</a>
+  </div>
+</section>
+{% endblock %}

@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>账户</h2>
+
+<form class="form" method="post">
+  <div class="grid three">
+    <label>账户名
+      <input type="text" name="name" required placeholder="如：招行卡 / 证券账户">
+    </label>
+    <label>初始余额 (CNY)
+      <input type="number" step="0.01" name="initial_balance" value="0">
+    </label>
+  </div>
+  <button class="btn" type="submit">新增账户</button>
+</form>
+
+<table class="table" style="margin-top:1rem;">
+  <thead>
+    <tr><th>账户</th><th>初始余额</th><th>盈亏合计</th><th>当前余额</th></tr>
+  </thead>
+  <tbody>
+    {% for a in accounts %}
+      <tr>
+        <td>{{ a.name }}</td>
+        <td>{{ '%.2f'|format(a.initial_balance) }}</td>
+        <td class="{{ 'pos' if a.pl>=0 else 'neg' }}">{{ '%.2f'|format(a.pl) }}</td>
+        <td class="{{ 'pos' if a.current_balance>=0 else 'neg' }}">{{ '%.2f'|format(a.current_balance) }}</td>
+      </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %}

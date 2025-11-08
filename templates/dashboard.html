@@ -1,0 +1,146 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>仪表盘</h2>
+
+<section class="grid two">
+  <div>
+    <h3>快速记账</h3>
+    <form class="form" method="post">
+      <div class="grid two">
+        <label>日期
+          <input type="date" name="date" value="{{ today_str }}">
+        </label>
+        <label>方向
+          <select name="direction">
+            <option>支出</option>
+            <option>收入</option>
+          </select>
+        </label>
+      </div>
+      <div class="grid three">
+        <label>金额
+          <input type="number" name="amount" step="0.01" required>
+        </label>
+        <label>手续费
+          <input type="number" name="fee" step="0.01" value="0">
+        </label>
+        <label>币种
+          <select name="currency">
+            <option>CNY</option>
+            <option>USD</option>
+            <option>EUR</option>
+            <option>HKD</option>
+          </select>
+        </label>
+      </div>
+      <div class="grid two">
+        <label>汇率到 CNY
+          <input type="number" name="rate_to_cny" step="0.0001" value="1">
+        </label>
+        <label>账户
+          <select name="account_id">
+            <option value="">（不指定）</option>
+            {% for a in accounts %}
+              <option value="{{ a.id }}">{{ a.name }}</option>
+            {% endfor %}
+          </select>
+        </label>
+      </div>
+      <div class="grid two">
+        <label>新账户名（可选，自动创建）
+          <input type="text" name="new_account_name" placeholder="例如：招行卡 / 证券账户">
+        </label>
+        <label>类别
+          <input list="cat-list" name="category" placeholder="如：工资 / 销售 / 投资 / 其他">
+          <datalist id="cat-list">
+            <option value="工资"></option>
+            <option value="销售"></option>
+            <option value="投资"></option>
+            <option value="其他"></option>
+          </datalist>
+        </label>
+      </div>
+      <label>标签（逗号分隔）
+        <input type="text" name="tags" placeholder="例如：项目A, 推广">
+      </label>
+      <label>备注
+        <textarea name="note" rows="2"></textarea>
+      </label>
+      <button class="btn" type="submit">保存</button>
+    </form>
+  </div>
+
+  <div>
+    <h3>关键指标</h3>
+    <div class="kpis">
+      <div class="kpi">
+        <div class="kpi-label">今日盈亏</div>
+        <div class="kpi-value">{{ '%.2f'|format(today_pl) }} CNY</div>
+      </div>
+      <div class="kpi">
+        <div class="kpi-label">7日累计</div>
+        <div class="kpi-value">{{ '%.2f'|format(week_pl) }} CNY</div>
+      </div>
+      <div class="kpi">
+        <div class="kpi-label">本月累计</div>
+        <div class="kpi-value">{{ '%.2f'|format(month_pl) }} CNY</div>
+      </div>
+    </div>
+
+    <h3 style="margin-top:1rem;">类别占比（正净额）</h3>
+    <canvas id="catChart" height="200"></canvas>
+  </div>
+</section>
+
+<section>
+  <h3>最近 30 天（日盈亏 & 累计）</h3>
+  <canvas id="dailyChart" height="240"></canvas>
+</section>
+
+<section>
+  <h3>月度盈亏</h3>
+  <canvas id="monthChart" height="240"></canvas>
+</section>
+
+<script>
+  const labels30 = {{ labels_30|tojson }};
+  const values30 = {{ values_30|tojson }};
+  const cumValues = {{ cum_values|tojson }};
+
+  const ctxDaily = document.getElementById('dailyChart').getContext('2d');
+  new Chart(ctxDaily, {
+    type: 'bar',
+    data: {
+      labels: labels30,
+      datasets: [
+        {label: '日盈亏 (CNY)', data: values30},
+        {label: '累计 (CNY)', type: 'line', data: cumValues}
+      ]
+    },
+    options: {
+      responsive: true,
+      interaction: { mode: 'index', intersect: false },
+      plugins: { legend: { position: 'top' } },
+      scales: { y: { beginAtZero: true } }
+    }
+  });
+
+  const monthLabels = {{ month_labels|tojson }};
+  const monthValues = {{ month_values|tojson }};
+  const ctxMonth = document.getElementById('monthChart').getContext('2d');
+  new Chart(ctxMonth, {
+    type: 'bar',
+    data: { labels: monthLabels, datasets: [{label:'月度盈亏 (CNY)', data: monthValues}] },
+    options: { responsive: true, scales: { y: { beginAtZero: true } } }
+  });
+
+  const catLabels = {{ cat_labels|tojson }};
+  const catValues = {{ cat_values|tojson }};
+  const ctxCat = document.getElementById('catChart').getContext('2d');
+  new Chart(ctxCat, {
+    type: 'doughnut',
+    data: { labels: catLabels, datasets: [{ label: '类别占比 (正净额)', data: catValues }] },
+    options: { responsive: true, plugins: { legend: { position: 'right' } } }
+  });
+</script>
+{% endblock %}

@@ -1,0 +1,42 @@
+* { box-sizing: border-box; }
+body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Heiti SC", sans-serif; margin:0; color:#222; }
+a { color: inherit; }
+.container { max-width: 1024px; margin: 0 auto; padding: 0 16px; }
+.nav { border-bottom: 1px solid #eee; }
+.nav-inner { display:flex; align-items:center; justify-content: space-between; padding: 12px 0; }
+.brand { font-weight: 700; text-decoration: none; }
+.menu a { margin-left: 16px; text-decoration: none; color:#333; }
+.menu a.logout { color:#c00; }
+.hero { padding: 56px 0; text-align: center; }
+.actions .btn { margin-right: 8px; }
+.form { display:block; background:#fafafa; border:1px solid #eee; padding:16px; border-radius:8px; }
+.form label { display:block; font-size:14px; margin-bottom: 8px; }
+.form input, .form select, .form textarea { width: 100%; padding:8px; margin-top:4px; }
+.btn { display:inline-block; padding:8px 14px; border-radius:6px; background:#222; color:#fff; border:none; text-decoration:none; cursor:pointer; }
+.btn-outline { background:#fff; border:1px solid #222; color:#222; }
+.btn-danger { background:#d33; }
+.grid { display:grid; grid-gap:12px; }
+.grid.two { grid-template-columns: 1fr 1fr; }
+.grid.three { grid-template-columns: 1fr 1fr 1fr; }
+.table { width:100%; border-collapse: collapse; }
+.table th, .table td { padding:8px; border-bottom:1px solid #eee; text-align:left; vertical-align: top; }
+.kpis { display:grid; grid-template-columns: 1fr 1fr 1fr; grid-gap:12px; }
+.kpi { background:#fff; border:1px solid #eee; border-radius:8px; padding:12px; }
+.kpi-label { color:#666; font-size:12px; }
+.kpi-value { font-size:20px; font-weight:700; }
+.flash-list { margin: 12px 0; }
+.flash { padding: 10px 12px; border-radius:6px; margin-bottom:8px; }
+.flash.success { background:#e8f5e9; }
+.flash.warning { background:#fff8e1; }
+.flash.info { background:#e3f2fd; }
+.flash.danger { background:#ffebee; }
+.footer { color:#777; font-size: 12px; padding: 24px 0; }
+.muted { color:#666; font-size: 14px; }
+.pagination { display:flex; gap:12px; align-items:center; margin-top:12px; }
+.pagination a { text-decoration:none; }
+.pagination .disabled { color:#aaa; }
+.pos { color:#137333; font-weight: 600; }
+.neg { color:#d33; font-weight: 600; }
+@media (max-width: 720px) {
+  .grid.two, .grid.three, .kpis { grid-template-columns: 1fr; }
+}

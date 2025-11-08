@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>流水</h2>
+
+<form class="form" method="get" action="{{ url_for('entries') }}">
+  <div class="grid three">
+    <label>开始日期
+      <input type="date" name="start_date" value="{{ params.get('start_date','') }}">
+    </label>
+    <label>结束日期
+      <input type="date" name="end_date" value="{{ params.get('end_date','') }}">
+    </label>
+    <label>方向
+      <select name="dir">
+        <option value="">全部</option>
+        <option value="收入" {% if params.get('dir')=='收入' %}selected{% endif %}>收入</option>
+        <option value="支出" {% if params.get('dir')=='支出' %}selected{% endif %}>支出</option>
+      </select>
+    </label>
+  </div>
+  <label>搜索（类别/标签/备注）
+    <input type="text" name="kw" value="{{ params.get('kw','') }}" placeholder="关键字">
+  </label>
+  <button class="btn" type="submit">筛选</button>
+  <a class="btn btn-outline" href="{{ url_for('export_csv') + ('?' + request.query_string.decode() if request.query_string else '') }}">导出当前筛选为 CSV</a>
+</form>
+
+<p class="muted">当前页合计：<b>{{ '%.2f'|format(page_sum) }} CNY</b></p>
+
+<table class="table">
+  <thead>
+    <tr>
+      <th>日期</th><th>方向</th><th>金额</th><th>手续费</th><th>币种</th><th>汇率</th>
+      <th>账户</th><th>类别</th><th>标签</th><th>备注</th><th>净额(CNY)</th><th></th>
+    </tr>
+  </thead>
+  <tbody>
+  {% for e in items %}
+    <tr>
+      <td>{{ e.date }}</td>
+      <td>{{ e.direction }}</td>
+      <td>{{ '%.2f'|format(e.amount) }}</td>
+      <td>{{ '%.2f'|format(e.fee) }}</td>
+      <td>{{ e.currency }}</td>
+      <td>{{ '%.4f'|format(e.rate_to_cny) }}</td>
+      <td>{{ e.account.name if e.account else '' }}</td>
+      <td>{{ e.category }}</td>
+      <td>{{ e.tags }}</td>
+      <td>{{ e.note }}</td>
+      <td class="{{ 'pos' if e.net_cny>=0 else 'neg' }}">{{ '%.2f'|format(e.net_cny) }}</td>
+      <td>
+        <form method="post" action="{{ url_for('delete_entry', entry_id=e.id) }}" onsubmit="return confirm('确认删除这条记录？');">
+          <button class="btn btn-danger" type="submit">删除</button>
+        </form>
+      </td>
+    </tr>
+  {% endfor %}
+  </tbody>
+</table>
+
+{% if pagination.pages > 1 %}
+<div class="pagination">
+  {% if pagination.has_prev %}
+    <a href="{{ url_for('entries', page=pagination.prev_num, **params) }}">&laquo; 上一页</a>
+  {% else %}
+    <span class="disabled">&laquo; 上一页</span>
+  {% endif %}
+  <span>第 {{ pagination.page }} / {{ pagination.pages }} 页</span>
+  {% if pagination.has_next %}
+    <a href="{{ url_for('entries', page=pagination.next_num, **params) }}">下一页 &raquo;</a>
+  {% else %}
+    <span class="disabled">下一页 &raquo;</span>
+  {% endif %}
+</div>
+{% endif %}
+{% endblock %}
